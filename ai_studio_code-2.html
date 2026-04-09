@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Война и Мир: Навигатор ЕГЭ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --dark: #1a1a1a;
+            --light: #f4f1ea;
+            --accent: #8e2121;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Приветственный экран */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://cdnn1.inosmi.ru/img/24546/51/245465116_0:0:3000:1905_1240x0_80_0_0_63131e59c59cd32df7db3113b65c695a.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* Сетка кнопок */
+        .grid-container {
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .topic-card {
+            background: white;
+            height: 250px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            text-decoration: none;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .topic-card img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+            transition: 0.5s;
+        }
+
+        .topic-card:hover img {
+            filter: brightness(0.4) scale(1.1);
+        }
+
+        .topic-card span {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
+
+        /* Окно информации (Modal) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            z-index: 100;
+            overflow-y: auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: var(--light);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 20px;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .modal h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent);
+            font-size: 2.5rem;
+            margin-top: 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-left: 5px solid var(--gold);
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: var(--gold);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .quote-box {
+            grid-column: 1 / -1;
+            background: #e8e4d9;
+            padding: 30px;
+            font-style: italic;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>Война и Мир</h1>
+        <p>Интерактивный путеводитель по главным темам романа для подготовки к итоговому сочинению и ЕГЭ.</p>
+        <button onclick="document.getElementById('content').scrollIntoView({behavior: 'smooth'})" style="padding: 15px 30px; background: var(--gold); border: none; color: white; border-radius: 30px; cursor: pointer; font-weight: bold;">Начать разбор</button>
+    </div>
+
+    <div id="content" class="grid-container">
+        <!-- Кнопка 1 -->
+        <div class="topic-card" onclick="openModal(1)">
+            <img src="https://static.tildacdn.com/tild3434-6563-4333-b065-353461393134/3_1_____2016.png" alt="Патриотизм">
+            <span>Истинный и ложный патриотизм</span>
+        </div>
+        <!-- Кнопка 2 -->
+        <div class="topic-card" onclick="openModal(2)">
+            <img src="https://cdnn21.img.ria.ru/images/100350/38/1003503882_0:0:2039:2048_1920x1928_80_0_0_0cae97b8607df81e998c290fdf34d432.jpg" alt="Смысл жизни">
+            <span>Поиск смысла жизни</span>
+        </div>
+        <!-- Кнопка 3 -->
+        <div class="topic-card" onclick="openModal(3)">
+            <img src="https://www.kino-teatr.ru/movie/kadr/1065/111262.jpg" alt="Семья">
+            <span>Мысль семейная</span>
+        </div>
+        <!-- Кнопка 4 -->
+        <div class="topic-card" onclick="openModal(4)">
+            <img src="https://static.78.ru/images/uploads/media/2025/9/25/1758785345398.jpg" alt="Красота">
+            <span>Истинная красота</span>
+        </div>
+        <!-- Кнопка 5 -->
+        <div class="topic-card" onclick="openModal(5)">
+            <img src="https://www.kino-teatr.ru/movie/kadr/1065/113526.jpg" alt="Народ">
+            <span>Роль народа в истории</span>
+        </div>
+        <!-- Кнопка 6 -->
+        <div class="topic-card" onclick="openModal(6)">
+            <img src="https://i.okcdn.ru/videoPreview?id=1153612647103&type=47&idx=32&tkn=HPKyXLF6ul22wPtqGUy0xcbx6Ao&i=1&fn=external_8" alt="Душа">
+            <span>Диалектика души</span>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Заголовок темы</h2>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>О чём речь?</h3>
+                    <p id="modal-about">Описание проблемы...</p>
+                </div>
+                <div class="info-box">
+                    <h3>Ключевые герои</h3>
+                    <p id="modal-heroes">Список персонажей...</p>
+                </div>
+                <div class="info-box" style="grid-column: 1 / -1;">
+                    <h3>Подробный разбор (для сочинения)</h3>
+                    <p id="modal-explain">Объяснение...</p>
+                </div>
+                <div class="quote-box">
+                    <p id="modal-quote">"Цитата"</p>
+                </div>
+                <div class="info-box" style="grid-column: 1 / -1; border-left: 5px solid var(--accent);">
+                    <h3>Готовый вывод</h3>
+                    <p id="modal-result">Вывод для заключения...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            1: {
+                title: "Истинный и ложный патриотизм",
+                about: "Чем патриотизм-крик отличается от патриотизма-поступка?",
+                heroes: "Истинные: Тушин, Кутузов, Ферапонтов. Ложные: Берг, Элен Курагина.",
+                explain: "Истинный патриот действует тихо, часто без приказа. Он жертвует имуществом и жизнью. Ложный патриот ищет выгоду: чин, награду или спасение вещей. Берг просит колясочку для мебели, пока Москва горит.",
+                quote: "«Дубина народной войны поднялась со всею своею грозною и величественною силой...»",
+                result: "Патриотизм проверяется не словами на балах, а делами в трудный для страны час."
+            },
+            2: {
+                title: "Поиск смысла жизни",
+                about: "Путь Андрея Болконского и Пьера Безухова к счастью.",
+                heroes: "Князь Андрей, Пьер Безухов, Платон Каратаев.",
+                explain: "Андрей проходит путь от мечты о славе (Наполеон) к пониманию вечности под небом Аустерлица. Пьер через масонство и плен приходит к простой истине: счастье в самом человеке и любви.",
+                quote: "«Как же я не видал прежде этого высокого неба?.. Да, все пустое, все обман...»",
+                result: "Смысл жизни не во внешних достижениях, а в обретении внутренней гармонии и связи с людьми."
+            },
+            3: {
+                title: "Мысль семейная",
+                about: "Сравнение семей Ростовых, Болконских и Курагиных.",
+                heroes: "Семья Ростовых (идеал), Семья Болконских (разум), Семья Курагиных (фальшь).",
+                explain: "Ростовы — это искренность и тепло. Болконские — суровая дисциплина и интеллект. Курагины — холодный расчет и отсутствие морали. Толстой считает идеалом семью, основанную на естественности.",
+                quote: "«В семье Ростовых всё было просто и весело...»",
+                result: "Семья — это живой организм, строящийся на любви и жертвенности, а не на светских правилах."
+            },
+            4: {
+                title: "Истинная и ложная красота",
+                about: "Наташа Ростова vs Элен Курагина.",
+                heroes: "Наташа Ростова (внутренняя красота), Элен (внешний блеск).",
+                explain: "Элен — совершенная мраморная статуя, но внутри она пуста и порочна. Наташа — некрасивая, но живая, чуткая и способная на глубокие чувства. Её красота проявляется в действии.",
+                quote: "«Черноглазая, с большим ртом, некрасивая, но живая девочка...»",
+                result: "Настоящая красота не в безупречности черт, а в богатстве души и жизненной силе."
+            },
+            5: {
+                title: "Роль народа в истории",
+                about: "Кутузов и Наполеон как два полюса истории.",
+                heroes: "Кутузов, Наполеон, Платон Каратаев, Тихон Щербатый.",
+                explain: "Толстой отрицает роль личности как творца истории. Историю делает народ (роевая жизнь). Кутузов велик тем, что понимает волю народа, а Наполеон смешон в своей попытке всем управлять.",
+                quote: "«Нет величия там, где нет простоты, добра и правды».",
+                result: "Победа в народной войне — заслуга единства простых людей, а не «гениального» полководца."
+            },
+            6: {
+                title: "Диалектика души",
+                about: "Как персонажи меняются под влиянием событий.",
+                heroes: "Николай Ростов, Наташа, Андрей, Пьер.",
+                explain: "Метод Толстого — показывать не застывшее чувство, а процесс его изменения. Герои ошибаются, падают, но через страдания становятся глубже и чище. Человек — это поток.",
+                quote: "«Люди как реки: вода во всех одинаковая, но каждая река бывает то узкая, то быстрая, то чистая...»",
+                result: "Жизнь — это непрерывное движение и поиск, без которых личность умирает."
+            }
+        };
+
+        function openModal(id) {
+            const topic = data[id];
+            document.getElementById('modal-title').innerText = topic.title;
+            document.getElementById('modal-about').innerText = topic.about;
+            document.getElementById('modal-heroes').innerText = topic.heroes;
+            document.getElementById('modal-explain').innerText = topic.explain;
+            document.getElementById('modal-quote').innerText = topic.quote;
+            document.getElementById('modal-result').innerText = topic.result;
+            document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
